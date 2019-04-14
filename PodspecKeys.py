@@ -1,0 +1,10 @@
+class Keys(object):
+    name = 's.name'
+    version = 's.version'
+    license = 's.license'
+    licenseType = ':type'
+    summary = 's.summary'
+    homepage = 's.homepage'
+    authors = 's.authors'
+    source = 's.source'
+    iosDeploymentTarget = 's.ios.deployment_target'
