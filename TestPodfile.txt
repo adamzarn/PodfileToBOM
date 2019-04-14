@@ -1,0 +1,1 @@
+pod 'Alamofire', :git => 'https://github.com/Alamofire/Alamofire.git', :tag => '4.7.2'

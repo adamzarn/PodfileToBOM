@@ -7,7 +7,8 @@ import urllib2
 import sys
 
 pods = []
-with file(sys.argv[1]) as podfile:
+inputFile = 'TestPodfile.txt' if len(sys.argv) == 1 else sys.argv[1]
+with file(inputFile) as podfile:
     print("\nParsing Podfile...")
     podfileLines = podfile.readlines()
     for line in podfileLines:
@@ -47,9 +48,9 @@ def getSpecs(pods):
 
         for i, spec in enumerate(podspecs):
 
-            array = ParsingHelpers.getArray(spec, "=")
+            array = ParsingHelpers.getArray(spec, '=')
             if len(array) > 1:
-                key = array[0]
+                key = ParsingHelpers.getArray(array[0], '.')[1]
                 value = array[1]
 
             # Handle License when it's represented as a dictionary
