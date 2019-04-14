@@ -19,7 +19,8 @@ with file(sys.argv[1]) as podfile:
         pod = Pod.Pod(podText)
         pods.append(pod)
 
-print("\nFound " + str(len(pods)) + " pod(s)\n")
+text = ' pod' if len(pods) == 1 else ' pods'
+print("\nFound " + str(len(pods)) + text + "\n")
 
 def getSpecs(pods):
 
