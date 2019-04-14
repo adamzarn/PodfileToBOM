@@ -8,8 +8,11 @@ import sys
 
 pods = []
 inputFile = 'TestPodfile.txt' if len(sys.argv) == 1 else sys.argv[1]
+
+# Create Pods from Podfile
 with file(inputFile) as podfile:
-    print("\nParsing Podfile...")
+    fileName = inputFile.split('/')[-1]
+    print("\nParsing " + fileName + "...")
     podfileLines = podfile.readlines()
     for line in podfileLines:
         pattern = '.*pod.*:git.*:tag.*'
@@ -33,12 +36,26 @@ def getSpecs(pods):
         # Split .podspec file into lines
         podspecs = podspecFile.readlines()
 
+        # Get prefix (usually s, but could be f, spec, etc.)
+        prefix = ''
+        for spec in podspecs:
+            pattern = 'Pod::Spec.new do \|.*\|.*'
+            match = re.search(pattern, spec)
+            if match is None:
+                continue
+            else:
+                prefix = match.group().rstrip().split('|')[-2] + '.'
+
+        if prefix == '':
+            print('.podspec file is badly formatted')
+            continue
+
         dict = {}
 
         def handleLicense(i, podspecs):
             licenseString = podspecs[i]
             j = 1
-            while podspecs[i + j] and 's.' not in podspecs[i + j]:
+            while podspecs[i + j] and prefix not in podspecs[i + j]:
                 licenseString += podspecs[i + j]
                 j += 1
             pattern = PodspecKeys.Keys.licenseType + ' => .*,'
@@ -53,13 +70,13 @@ def getSpecs(pods):
                 key = ParsingHelpers.getArray(array[0], '.')[1]
                 value = array[1]
 
-            # Handle License when it's represented as a dictionary
-            if key == PodspecKeys.Keys.license and value[0] == '{':
-                handleLicense(i, podspecs)
+                # Handle License when it's represented as a dictionary
+                if key == PodspecKeys.Keys.license and value[0] == '{':
+                    handleLicense(i, podspecs)
 
-            # Handle simple case of {string: string}
-            else:
-                dict[array[0]] = array[1]
+                # Handle simple case of string = string
+                else:
+                    dict[key] = value
 
         podspec = Podspec.Podspec(ParsingHelpers.val(PodspecKeys.Keys.name, dict),
                                   ParsingHelpers.val(PodspecKeys.Keys.version, dict),
