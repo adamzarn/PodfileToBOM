@@ -1,22 +1,17 @@
+import ParsingHelpers
+import PodspecKeys
+
 class Podspec:
 
-  def __init__(self,
-               name,
-               version,
-               license,
-               summary,
-               homepage,
-               authors,
-               source,
-               iosDeploymentTarget):
-    self.name = name
-    self.version = version
-    self.license = license
-    self.summary = summary
-    self.homepage = homepage
-    self.authors = authors
-    self.source = source
-    self.iosDeploymentTarget = iosDeploymentTarget
+  def __init__(self, dict):
+    self.name = ParsingHelpers.val(PodspecKeys.Keys.name, dict)
+    self.version = ParsingHelpers.val(PodspecKeys.Keys.version, dict)
+    self.license = ParsingHelpers.val(PodspecKeys.Keys.license, dict)
+    self.summary = ParsingHelpers.val(PodspecKeys.Keys.summary, dict)
+    self.homepage = ParsingHelpers.val(PodspecKeys.Keys.homepage, dict)
+    self.authors = ParsingHelpers.val(PodspecKeys.Keys.authors, dict)
+    self.source = ParsingHelpers.val(PodspecKeys.Keys.source, dict)
+    self.iosDeploymentTarget = ParsingHelpers.val(PodspecKeys.Keys.iosDeploymentTarget, dict)
 
   @property
   def description(self):
