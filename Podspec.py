@@ -1,25 +1,48 @@
-import ParsingHelpers
 import PodspecKeys
 
 class Podspec:
 
-  def __init__(self, dict):
-    self.name = ParsingHelpers.val(PodspecKeys.Keys.name, dict)
-    self.version = ParsingHelpers.val(PodspecKeys.Keys.version, dict)
-    self.license = ParsingHelpers.val(PodspecKeys.Keys.license, dict)
-    self.summary = ParsingHelpers.val(PodspecKeys.Keys.summary, dict)
-    self.homepage = ParsingHelpers.val(PodspecKeys.Keys.homepage, dict)
-    self.authors = ParsingHelpers.val(PodspecKeys.Keys.authors, dict)
-    self.source = ParsingHelpers.val(PodspecKeys.Keys.source, dict)
-    self.iosDeploymentTarget = ParsingHelpers.val(PodspecKeys.Keys.iosDeploymentTarget, dict)
+    def __init__(self, json):
 
-  @property
-  def description(self):
-    return 'Name: ' + self.name + '\n' \
-        + 'Version: ' + self.version + '\n' \
-        + 'License: ' + self.license + '\n' \
-        + 'Summary: ' + self.summary + '\n' \
-        + 'Homepage: ' + self.homepage + '\n' \
-        + 'Authors: ' + self.authors + '\n' \
-        + 'Source: ' + self.source + '\n' \
-        + 'iOS Deployment Target: ' + self.iosDeploymentTarget
+        if PodspecKeys.Keys.name in json and PodspecKeys.Keys.version in json:
+            self.dependency = 'package' + ':' + json[PodspecKeys.Keys.name] + ':' + json[PodspecKeys.Keys.version]
+            self.name = json[PodspecKeys.Keys.name]
+        else:
+            self.dependency = ''
+            self.name = ''
+
+        if PodspecKeys.Keys.license in json:
+            license = json[PodspecKeys.Keys.license]
+            if isinstance(license, dict):
+                self.licenses = [license[PodspecKeys.Keys.licenseType]]
+            else:
+                self.licenses = [license]
+        else:
+            self.licenses = []
+
+        if PodspecKeys.Keys.homepage in json:
+            self.url = json[PodspecKeys.Keys.homepage]
+        else:
+            self.url = ''
+
+        if PodspecKeys.Keys.authors in json:
+            if isinstance(json[PodspecKeys.Keys.authors], dict):
+                self.developers = list(json[PodspecKeys.Keys.authors].keys())
+            else:
+                self.developers = json[PodspecKeys.Keys.authors]
+        else:
+            self.developers = []
+
+    @property
+    def description(self):
+        developersString = self.developers
+        if isinstance(self.developers, list):
+            developersString = ', '.join(self.developers)
+        return    '\n' +    'Dependency: ' +    self.dependency \
+                + '\n' +    'Name: '       +    self.name \
+                + '\n' +    'Licenses: '   +    self.licenses \
+                + '\n' +    'Url: '        +    self.url \
+                + '\n' +    'Developers: ' +    developersString \
+        
+
+    
